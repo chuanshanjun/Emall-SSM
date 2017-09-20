@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dayuanit.emall.mapper.MallOrderMapper">
+
+  <resultMap id="mallOrderResultMap" type="mallOrder">
+    <id property="id" column="id"/>
+    <result property="userId" column="user_id"/>
+    <result property="status" column="status"/>
+    <result property="orderFrom" column="order_from"/>
+    <result property="createTime" column="create_time"/>
+    <result property="modifyTime" column="modify_time"/>
+    <result property="payChannel" column="pay_channel"/>
+    <result property="province" column="province"/>
+    <result property="city" column="city"/>
+    <result property="area" column="area"/>
+    <result property="phone" column="phone"/>
+    <result property="realName" column="real_name"/>
+    <result property="detail" column="detail"/>
+    <result property="amount" column="amount"/>
+  </resultMap>
+
+  <sql id="mall_order_filed">
+    id,user_id,status,order_from,create_time,modify_time,pay_channel,province,city,area,phone,real_name,detail,amount
+  </sql>
+
+  <insert id="createOrder" parameterType="mallOrder" useGeneratedKeys="true" keyProperty="id">
+    insert into mall_order(user_id,status,order_from,create_time,modify_time, amount,province,city,area,phone,real_name,detail,pay_channel)
+    VALUE (#{userId}, #{status}, #{orderFrom}, now(), now(),#{amount},#{province},#{city},#{area},#{phone},#{realName},#{detail},#{payChannel})
+  </insert>
+
+  <select id="getOrderById" resultMap="mallOrderResultMap">
+    select <include refid="mall_order_filed"></include>
+    FROM mall_order
+    where id=#{mallOrderId};
+  </select>
+
+  <update id="changeOrderStatus" parameterType="java.util.HashMap">
+    UPDATE mall_order set status=#{status},modify_time=now() where user_id=#{userId} and id=#{mallOrderId};
+  </update>
+
+  <update id="updateOrderInfo">
+    update mall_order
+    <trim prefix="set" suffixOverrides=",">
+      modify_time=now(),
+      <if test="payChannel != null">
+        pay_channel=#{payChannel},
+      </if>
+      <if test="province != null">
+        province=#{province},
+      </if>
+      <if test="city != null">
+        city=#{city},
+      </if>
+      <if test="area != null">
+        area=#{area},
+      </if>
+      <if test="phone != null">
+        phone=#{phone},
+      </if>
+      <if test="realName != null">
+        real_name=#{realName},
+      </if>
+      <if test="detail != null">
+        detail=#{detail},
+      </if>
+    </trim>
+    where id=#{id};
+  </update>
+
+  <select id="listOrderByUserIdAndStatus" resultMap="mallOrderResultMap">
+    SELECT <include refid="mall_order_filed"></include>
+    from mall_order
+    <trim prefix="where" prefixOverrides="and|or">
+      <if test="userId != null">
+        and user_id=#{userId}
+      </if>
+      <if test="status != null">
+        and status=#{status}
+      </if>
+      <if test="status == null">
+        <![CDATA[
+          and status <> 0
+      ]]>
+      </if>
+    </trim>
+    order by id DESC limit #{offset},#{pageNum};
+  </select>
+
+  <select id="countListOrderByUserIdAndStatus" resultType="int">
+    SELECT count(*)
+    from mall_order
+    <trim prefix="where" prefixOverrides="and|or">
+      <if test="userId != null">
+        and user_id=#{userId}
+      </if>
+      <if test="status != null">
+        and status=#{status}
+      </if>
+      <if test="status == null">
+        <![CDATA[
+          and status <> 0
+      ]]>
+      </if>
+    </trim>
+  </select>
+
+</mapper>

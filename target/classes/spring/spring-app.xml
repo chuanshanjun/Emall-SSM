@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<!--此处加载的类对整个应用程序是共享的-->
+    <context:component-scan base-package="com.dayuanit"/><!--扫描器 扫描到有注解的包就注入-->
+
+	<!--tips:classpath和classpath*区别：同名资源存在时，classpath只从第一个符合条件的classpath中加载资源，
+	而classpath*会从所有的classpath中加载符合条件的资源。
+	classpath*，需要遍历所有的classpath，效率肯定比不上classpath，
+	因此在项目设计的初期就尽量规划好资源文件所在的路径，避免使用classpath*来加载。-->
+
+	<!--spring的sql数据工厂-->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+	  <property name="dataSource" ref="dataSource" />
+	  <property name="mapperLocations" value="classpath*:mybatis/mapper/**/*.xml" />
+	  <property name="configLocation" value="classpath:mybatis/mybatis-config.xml"/>
+	</bean>
+
+	<context:property-placeholder location="classpath:jdbc.properties,classpath:redis.properties"/>
+
+	<!--数据源配置-->
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+	    <property name="driverClassName" value="${jdbc.driver}"/>
+	    <property name="url" value="${jdbc.url}"/>
+	    <property name="username" value="${jdbc.username}"/>
+	    <property name="password" value="${jdbc.password}"/>
+	</bean>
+
+	<!--mapper由spring给我们创建-->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+	  <property name="basePackage" value="com.dayuanit.emall.mapper" />
+	  <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
+	</bean>
+
+	<!--spring管理机制的驱动-->
+	<tx:annotation-driven transaction-manager="txManager"/><!-- a PlatformTransactionManager is still required -->
+
+	<!--spring的事务管理机制并且配置个dataSource属性-->
+    <bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+	<import resource="spring-redis.xml"/>
+	<import resource="spring-cxf.xml"/>
+
+	<!--<import resource="spring-timer.xml"/>--><!-- 目录前加上"/"指从根目录上查找属绝对路径，
+	不加/的话是指从相对路径找也就是从你这个文件开始的路径来找-->
+	<!--<import resource="spring-email.xml"/>-->
+
+	<!--<import resource="spring-service.xml"/>-->
+
+</beans>

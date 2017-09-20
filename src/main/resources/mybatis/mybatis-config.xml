@@ -1,0 +1,20 @@
+<!DOCTYPE configuration
+PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+	<!-- 属性定义 加载一个properties文件 在 properties标签 中配置属性值 -->
+	<!--  <properties resource="jdbc.properties"/> -->
+
+	<!-- 定义 别名 -->
+	<typeAliases>
+		<typeAlias type="com.dayuanit.emall.pojo.MallUser" alias="mallUser"/>
+		<typeAlias type="com.dayuanit.emall.pojo.MallType" alias="malltype"/>
+		<typeAlias type="com.dayuanit.emall.pojo.MallGoods" alias="mallgoods"/>
+		<typeAlias type="com.dayuanit.emall.pojo.MallShoppingCart" alias="mallshoppingcart"/>
+		<typeAlias type="com.dayuanit.emall.pojo.MallAddress" alias="mallAddress"/>
+		<typeAlias type="com.dayuanit.emall.pojo.MallOrderDetail" alias="mallOrderDetail"/>
+		<typeAlias type="com.dayuanit.emall.pojo.MallOrder" alias="mallOrder"/>
+	</typeAliases>
+
+</configuration>

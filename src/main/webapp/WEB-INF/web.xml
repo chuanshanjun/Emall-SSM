@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+                      http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+         version="3.0"
+         metadata-complete="true">
+  <!--启动web项目，容器(Tomcat、Jetty等)首先会读取并解析web.xml配置文件，容器首先读取的两个节点listener和context-param，
+  紧接着容器创建一个ServletContext(上下文),这个WEB项目所有部分都将共享这个上下文-->
+
+  <!--容器将<context-param></context-param>转化为键值对，并交给ServletContext，此处我们将spring-app.xml做为参数给context-param中-->
+  <context-param>
+    <param-name>contextConfigLocation</param-name>
+    <param-value>classpath:/spring/spring-app.xml</param-value>
+  </context-param>
+
+  <!--容器创建<listener></listener>中的类实例，即创建监听，此处spring已经帮我们写好了一个现成的监听器(当然我们可以自己写一个)，所以我么可以直接使用Spring的监听器
+  在监听中会有contextInitialized(ServletContextEvent args)初始化方法，启动Web应用时，系统调用Listener的该方法，在这个方法中获得：
+  ServletContext application =ServletContextEvent.getServletContext(); context-param的值= application.getInitParameter("context-param的键");
+  在此处我们的context-param为spring-app.xml配置文件(里面有数据库连接的配置文件等)就是说我们在监听器类中初始化了spring配置文件。
+  除了初始化方法，它还有销毁方法，用于关闭应用前释放资源。比如说:数据库连接的关闭，此时，调用contextDestroyed(ServletContextEvent args)，关闭Web应用时，系统调用Listener的该方法。-->
+  <listener>
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
+
+  <!--接着容器会读取filter，根据指定的类路径来实例化过滤器，过滤器中可以写一些charset过滤器，还可写一些登陆过滤
+  因为一般登陆过之后我们会将userID放到session中，所以此时我们可以通过判断session中是否有userID来判断此客户是否登陆过，如果登陆过我们就给他权限让他去一些对应的网页
+  如果没登陆过则可以挡回。
+  <filter></filter>
+  -->
+
+  <!--以上都是在WEB项目还没有完全启动起来的时候就已经完成了的工作。如果系统中有Servlet，则Servlet是在第一次发起请求的时候被实例化的，
+  而且一般不会被容器销毁，它可以服务于多个用户的请求。所以，Servlet的初始化都要比上面提到的那几个要迟
+  总的来说，web.xml的加载顺序是: <context-param>-> <listener> -> <filter> -> <servlet>
+  其中，如果web.xml中出现了相同的元素，则按照在配置文件中出现的先后顺序来加载-->
+
+  <!-- tips:对于某类元素而言，与它们出现的顺序是有关的。以<filter>为例，web.xml中当然可以定义多个<filter>，与<filter>相关的一个元素是<filter-mapping>
+  注意，对于拥有相同<filter-name>的<filter>和<filter-mapping>元素而言，<filter-mapping>必须出现在<filter>之后，
+  否则当解析到<filter-mapping>时，它所对应的<filter-name>还未定义。web容器启动初始化每个<filter>时，按照<filter>出现的顺序来初始化的，
+  当请求资源匹配多个<filter-mapping>时，<filter>拦截资源是按照<filter-mapping>元素出现的顺序来依次调用doFilter()方法的
+  <servlet>同<filter>类似，此处不再赘述。-->
+
+  <!--使用spring的DispatcherServlet，客户端第一次请求某个Servlet时，系统创建该Servlet的实例，大部分Servlet都是这种Servlet。
+Web应用启动时立即创建Servlet实例，即servlet的load-on-start属性-->
+
+  <!--1创建Servlet实例 2Web容器调用Servlet的init()方法，对Servlet进行初始化 3 Servlet初始化后，将一直存在于容器中，用于响应客户端请求，
+  如果客户端发送GET请求，容器调用Servlet的doGet()方法处理并响应请求；如果客户端发送POST请求，
+  容器调用Servlet的doPost()方法处理并响应请求。或者统一使用service()方法处理来响应用户请求。
+  4 Web容器决定销毁Servlet时，先调用Servlet的destory()方法，通常在关闭Web应用时销毁Servlet实例。
+  此处创建servlet时初始化springmvc-->
+  <servlet>
+    <servlet-name>dispatcher</servlet-name>
+    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+    <init-param><!--初始化参数 需要contextConfigLocation参数对应的值就是spring-mvc的xml配置文件-->
+      <param-name>contextConfigLocation</param-name>
+      <param-value>classpath:/spring/spring-mvc.xml</param-value>
+    </init-param>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+
+  <!--所有带.do结尾的都会经过这个dispatcher-->
+  <servlet-mapping>
+    <servlet-name>dispatcher</servlet-name>
+    <url-pattern>*.do</url-pattern>
+  </servlet-mapping>
+
+  <filter>
+    <filter-name>charFilter</filter-name>
+    <filter-class>com.dayuanit.emall.filter.CharFilter</filter-class>
+    <init-param>
+      <param-name>charEncoding</param-name>
+      <param-value>UTF-8</param-value>
+    </init-param>
+  </filter>
+
+  <filter-mapping>
+    <filter-name>charFilter</filter-name>
+    <url-pattern>*.do</url-pattern>
+  </filter-mapping>
+
+  <session-config>
+    <session-timeout>30</session-timeout>
+  </session-config>
+
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+    <welcome-file>index.xhtml</welcome-file>
+    <welcome-file>index.htm</welcome-file>
+    <welcome-file>index.jsp</welcome-file>
+  </welcome-file-list>
+
+</web-app>

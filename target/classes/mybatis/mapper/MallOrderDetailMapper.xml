@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dayuanit.emall.mapper.MallOrderDetailMapper">
+
+
+    <resultMap id="mallOrderDetailResultMap" type="mallOrderDetail">
+        <id property="id" column="id"/>
+        <result property="goodId" column="good_id"/>
+        <result property="orderId" column="order_id"/>
+        <result property="counts" column="counts"/>
+        <result property="unitPrice" column="unit_price"/>
+        <result property="amount" column="amount"/>
+        <result property="goodName" column="good_name"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+    <sql id="mallOrderDetail_Column_List">
+        id, good_id, order_id, counts, unit_price, amount, good_name, create_time
+        modify_time
+    </sql>
+
+    <insert id="save" parameterType="mallOrderDetail" useGeneratedKeys="true" keyProperty="id">
+      insert into mall_order_detail (order_id, good_id, counts, unit_price, amount, good_name, create_time)
+      value(#{orderId}, #{goodId}, #{counts}, #{unitPrice}, #{amount}, #{goodName}, now());
+    </insert>
+
+    <select id="listMallOrderDetail" resultMap="mallOrderDetailResultMap">
+        select <include refid="mallOrderDetail_Column_List"></include>
+        FROM mall_order_detail
+        where order_id=#{mallOrderId};
+    </select>
+
+</mapper>

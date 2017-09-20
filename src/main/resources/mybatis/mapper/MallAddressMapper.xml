@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dayuanit.emall.mapper.MallAddressMapper">
+
+  <resultMap id="MallAddressResultMap" type="mallAddress">
+    <id column="Id" jdbcType="INTEGER" property="id" />
+    <result column="user_id" jdbcType="TINYINT" property="userId" />
+    <result column="province" jdbcType="VARCHAR" property="province" />
+    <result column="city" jdbcType="VARCHAR" property="city" />
+    <result column="area" jdbcType="VARCHAR" property="area" />
+    <result column="accurate_address" jdbcType="VARCHAR" property="accurateAddress" />
+    <result column="real_name" jdbcType="VARCHAR" property="realName" />
+    <result column="cellphone_num" jdbcType="TINYINT" property="cellphoneNum" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="default_address" jdbcType="TINYINT" property="defaultAddress" />
+    <result column="create_time" jdbcType="VARCHAR" property="createTime" />
+    <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
+    <result column="province_word" jdbcType="VARCHAR" property="provinceWord" />
+    <result column="city_word" jdbcType="VARCHAR" property="cityWord" />
+    <result column="area_word" jdbcType="VARCHAR" property="areaWord" />
+  </resultMap>
+
+  <sql id="MallAddress_Column_List">
+    Id, user_id, province, city, area, accurate_address, real_name, cellphone_num, status,
+    default_address, create_time, modify_time, province_word, city_word, area_word
+  </sql>
+
+  <insert id="addAddress" parameterType="mallAddress" useGeneratedKeys="true" keyProperty="id">
+    insert into mall_address (user_id, province,
+    city, area, accurate_address,
+    real_name, cellphone_num, status,
+    default_address, create_time, modify_time,
+    province_word, city_word, area_word
+    )
+    values (#{userId,jdbcType=TINYINT}, #{province,jdbcType=VARCHAR},
+    #{city,jdbcType=VARCHAR}, #{area,jdbcType=VARCHAR}, #{accurateAddress,jdbcType=VARCHAR},
+    #{realName,jdbcType=VARCHAR}, #{cellphoneNum,jdbcType=TINYINT}, #{status,jdbcType=TINYINT},
+    #{defaultAddress,jdbcType=TINYINT}, now(), now(),
+    #{provinceWord,jdbcType=VARCHAR}, #{cityWord,jdbcType=VARCHAR}, #{areaWord,jdbcType=VARCHAR}
+    )
+  </insert>
+
+  <select id="listAddress" resultMap="MallAddressResultMap">
+    SELECT <include refid="MallAddress_Column_List"></include>
+    from mall_address
+    where user_id=#{userId} and status=1;
+  </select>
+
+  <update id="modify">
+    UPDATE mall_address set province=#{province}, city=#{city}, area=#{area}, accurate_address=#{accurateAddress},
+    real_name=#{realName}, cellphone_num=#{cellphoneNum}, default_address=#{defaultAddress}, modify_time=now(),
+    province_word=#{provinceWord}, city_word=#{cityWord}, area_word=#{areaWord}
+    where id=#{id}
+  </update>
+
+  <update id="deleteAddress">
+    update mall_address set status=2
+    where id=#{addressId};
+  </update>
+
+  <select id="getAddressById" resultMap="MallAddressResultMap">
+    select <include refid="MallAddress_Column_List"></include>
+    from mall_address
+    where id=#{addressId};
+  </select>
+
+</mapper>

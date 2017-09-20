@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dayuanit.emall.mapper.MallGoodsMapper">
+
+
+  <resultMap id="MallGoodsResultMap" type="mallgoods">
+    <id column="Id" jdbcType="INTEGER" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="price" jdbcType="INTEGER" property="price" />
+    <result column="in_stock" jdbcType="INTEGER" property="inStock" />
+    <result column="goods_desc" jdbcType="VARCHAR" property="goodsDesc" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="type_id" jdbcType="INTEGER" property="typeId" />
+    <result column="selled_counts" jdbcType="INTEGER" property="selledCounts" />
+    <result column="photo" jdbcType="VARCHAR" property="photo" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
+  </resultMap>
+
+  <sql id="MallGoods_Column_List">
+    Id, name, price, in_stock, goods_desc, status, type_id, selled_counts, photo, create_time,
+    modify_time
+  </sql>
+
+  <insert id="addGoods" parameterType="mallgoods" useGeneratedKeys="true" keyProperty="id">
+    insert into mall_goods (Id, name, price,
+      in_stock, goods_desc, status,
+      type_id, selled_counts, photo,
+      create_time, modify_time)
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{price,jdbcType=INTEGER},
+      #{inStock,jdbcType=INTEGER}, #{goodsDesc,jdbcType=VARCHAR}, #{status,jdbcType=TINYINT},
+      #{typeId,jdbcType=INTEGER}, #{selledCounts,jdbcType=INTEGER}, #{photo,jdbcType=VARCHAR},
+      now(), now())
+  </insert>
+
+  <select id="listGoods" parameterType="java.lang.Integer" resultMap="MallGoodsResultMap">
+    select
+    <include refid="MallGoods_Column_List" />
+    from mall_goods
+    where status=1 and type_id=#{typeId};
+  </select>
+
+  <select id="getGoodById" resultMap="MallGoodsResultMap">
+    SELECT <include refid="MallGoods_Column_List"></include>
+    from mall_goods
+    where id=#{goodId};
+  </select>
+
+</mapper>

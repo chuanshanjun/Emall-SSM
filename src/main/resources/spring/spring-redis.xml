@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
+    <!--连接池-->
+    <bean id="redisPool" class="redis.clients.jedis.JedisPoolConfig">
+        <property name="maxIdle" value="${redis.maxIdle}"/><!-- 最大空闲数-->
+        <property name="maxWaitMillis" value="${redis.maxWait}"/><!-- 最大等待时间 单位：毫秒-->
+    </bean>
+    <!--连接工厂是来创建连接的，并且从池子里面把连接拿出来-->
+    <bean id="connectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">
+        <property name="poolConfig" ref="redisPool"/>
+        <property name="hostName" value="${redis.ip}"/>
+        <property name="port" value="${redis.port}"/>
+    </bean>
+    <!--真正干活的是redisTemplate 通过连接工厂给你连接来干活-->
+    <bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate">
+        <property name="connectionFactory" ref="connectionFactory"/>
+        <property name="keySerializer" ref="keySerializer"/><!--如果不设置redisTemplate的keySerializer属性那么默认为JDK序列化-->
+        <!--这边value如果使用StringredisSerializer序列化的话把值(list)转成String放到redis中，但从redis中取出来的话还是String无法转成list
+        但如果使用默认的jdk序列化的话存到redis是JDK序列化的一个类，返回回来的话是Object可以将其转成list-->
+        <!--<property name="valueSerializer" ref="keySerializer"/>-->
+    </bean>
+    <!-- keySerializer该属性设置为StringRedisSerializer，为了使得key用String序列化-->
+    <bean id="keySerializer" class="org.springframework.data.redis.serializer.StringRedisSerializer"></bean>
+
+</beans>

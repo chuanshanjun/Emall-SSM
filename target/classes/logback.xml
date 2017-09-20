@@ -1,0 +1,43 @@
+<configuration>
+    <!--控制台输出-->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%-5level] [%logger.%M:%L] |%msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!--输出文件-->
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <file>/var/log/emall/testFile.log</file>
+        <append>true</append>
+        <immediateFlush>true</immediateFlush>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%-5level] [%logger.%M:%L] |%msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="FILE" />
+        <queueSize>512</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+    </appender>
+
+    <appender name="FILE2" class="ch.qos.logback.core.FileAppender">
+        <file>/var/log/emall/user.log</file>
+        <append>true</append>
+        <immediateFlush>true</immediateFlush>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%-5level] [%logger.%M:%L] |%msg%n</pattern>
+        </encoder>
+    </appender>
+    <!--logger继承root additivity选择是否既往自己的文件输出又往root输出-->
+    <logger name="com.dayuanit.atm.controller.UserController" level="INFO" additivity="false" >
+        <appender-ref ref="FILE2" />
+    </logger>
+    <!--root是根节点选择两个输出一个是控制台，并且同步输出至文件-->
+    <root level="INFO">
+        <appender-ref ref="STDOUT" />
+        <appender-ref ref="ASYNC" />
+    </root>
+
+</configuration>

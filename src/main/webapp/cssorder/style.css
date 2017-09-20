@@ -1,0 +1,301 @@
+.wrap{
+	width: 1000px;
+	margin: 0 auto;
+}
+.head_top{
+	height: 31px;
+	line-height: 31px;
+}
+.leftArea{
+	float: left;
+}
+.rightArea{
+	padding-right: 20px;
+	float: right;
+}
+#collection{
+	padding-left: 20px;
+	background: url(../images/collection.png) left center no-repeat;
+}
+.search{
+	height: 84px;
+	background: #1d7ad9;
+}
+.logo{
+	padding-top: 13px;
+	padding-left: 30px;
+	float: left;
+}
+/*订单流程*/
+.progress_bar{
+	padding-top: 25px;
+	float: right;
+}
+.progress_bar img{
+	padding-left: 22px;
+}
+.progress_bar li{
+	color: #fff;
+	float: right;
+}
+.progress_first{
+	width: 165px;
+}
+.progress_second{
+	width: 160px;
+}
+.progress_third{
+	width: 124px;
+}
+/*订单*/
+.account{
+	padding-top: 12px;
+}
+.account_box{
+	border: 1px solid #ccc;
+	margin-bottom: 20px;
+}
+.account_box h3{
+	height: 30px;
+	background: #f2f2f2;
+	color: #444;
+	font-size: 14px;
+	line-height: 30px;
+	text-indent: 10px;
+	border-bottom: 1px solid #e3e3e3;
+	border-top: 1px solid #fff;
+}
+.receive,.pay,.receipt{
+	padding-bottom: 25px;
+}
+.receive ul,.pay ul,.receipt ul{
+	padding-top: 20px;
+	padding-left: 40px;
+}
+.receive span b,.pay span b,.receipt span b{
+	color: #ff0000;
+	font-weight: normal;
+	padding-right: 10px;
+}
+.receive li,.pay li,.receipt li{
+	color: #444;
+}
+.address span{
+	line-height: 20px;
+	float: left;
+}
+.address h4{
+	width: 152px;
+	height: 18px;
+	line-height: 18px;
+	font-size: 12px;
+	font-weight: normal;
+	text-indent: 10px;
+	border: 1px solid #c2c2c2;
+	float: left;
+}
+.address i{
+	display: inline-block;
+	width: 17px;
+	height: 18px;
+	background: url(../images/address.png) left center no-repeat;
+	float: right;
+}
+.receive li,.receipt li{
+	height: 20px;
+	line-height: 20px;
+	padding-bottom: 16px;
+}
+.input_box{
+	height: 18px;
+	border: 1px solid #c2c2c2;
+}
+.width_390{
+	width: 390px;
+}
+.width_110{
+	width: 110px;
+}
+.width_62{
+	width: 62px;
+}
+.width_98{
+	width: 98px;
+}
+.account_btn{
+	height: 22px;
+	background: #f2f2f2;
+	color: #666;
+	border: 1px solid #c2c2c2;
+	padding: 0 20px;
+	margin-right: 10px;
+	margin-top: 10px;
+}
+.blue_btn{
+	background: #3e8bf5;
+	color: #fff;
+	border-color: #3e8bf5;
+}
+/*支付方式*/
+.pay li{
+	height: 30px;
+	line-height: 30px;
+}
+.pay input,.pay label{
+	vertical-align: middle;
+}
+.pay input{
+	margin-right: 8px;
+}
+.pay label{
+	margin-right: 18px;
+}
+.pay i{
+	display: inline-block;
+	height: 30px;
+	width: 33px;
+	background: url(../images/weixin.jpg)left center no-repeat;
+	vertical-align: middle;
+}
+/*发票信息*/
+.need_receipt{
+	padding-top: 18px;
+	padding-left: 30px;
+}
+.need_receipt input{
+	margin-right: 5px;
+}
+.need_receipt input,.need_receipt label{
+	vertical-align: middle;
+}
+.receipt select{
+	border: 1px solid #abadb3;
+	font-size: 12px;
+}
+/*送货清单*/
+.deliver h3 a{
+	color: #3377ff;
+	font-size: 12px;
+	font-weight: normal;
+	padding-right: 33px;
+	float: right;
+}
+.deliver ul,.order_info{
+	color: #444;
+	line-height: 40px;
+	border-bottom: 1px solid #e6e6e6;
+	padding-left: 30px;
+}
+.deliver li{
+	color: #666;
+	line-height: 34px;
+	float: left;
+}
+.deliver_width_440{
+	width: 440px;
+}
+.deliver_width_135{
+	width: 135px;
+}
+.order_name,.order_price,.return_money,.commodity_num,.count{
+	float: left;
+}
+.order_img{
+	width: 90px;
+	height: 100px;
+	text-align: center;
+	position: relative;
+	float: left;
+}
+.order_img img{
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	margin: auto;
+}
+.order_text{
+	float: left;
+}
+.order_text h4{
+	font-size: 12px;
+	font-weight: normal;
+	color: #666;
+}
+.count{
+	color: #d70000;
+	font-weight: bold;
+}
+.remark{
+	padding-left: 30px;
+}
+.leave_word,.remark p{
+	line-height: 40px;
+}
+.leave_word{
+	color: #3377ff;
+}
+.remark p{
+	color: #ee0000;
+	background: url(../images/sorry_icon.png) left center no-repeat;
+	padding-left: 20px;
+}
+.remark_text{
+	padding-left: 10px;
+	padding-top: 15px;
+	float: left;
+}
+.remark_text span{
+	display: block;
+	color: #666;
+	line-height: 20px;
+}
+.remark_text b{
+	color: #d70000;
+}
+.total p{
+	color: #929292;
+	font-size: 14px;
+	text-align: right;
+	padding-right: 30px;
+	padding-top: 40px;
+}
+.total span{
+	color: #ee0000;
+	font-family: "Micsoft YaHei","微软雅黑";
+	font-size: 22px;
+	padding-left: 10px;
+}
+.submit_btn{
+	padding: 16px 25px 30px 0;
+}
+.submit_btn input{
+	height: 34px;
+	background: #e50007;
+	color: #fff;
+	font-size: 18px;
+	padding: 0 38px;
+	float: right;
+}
+
+
+
+
+
+/*footer*/
+#footer{
+	background: #d4d4d4;
+	text-align: center;
+	padding: 50px 0;
+	margin-top: 40px;
+}
+#footer p{
+	line-height: 24px;
+}
+.credit_rating{
+	padding-top: 24px;
+}
+.credit_rating a{
+	padding: 0 12px;
+}
