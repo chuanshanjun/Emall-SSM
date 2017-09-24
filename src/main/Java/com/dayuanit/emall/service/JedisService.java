@@ -18,4 +18,6 @@ public interface JedisService {
     void setArea(String key, List<Map<String, String>> value);
 
     List<Map<String, String>> getAres(String key);
+
+    String popOrder();
 }

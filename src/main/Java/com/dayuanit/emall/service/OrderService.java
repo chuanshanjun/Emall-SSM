@@ -6,6 +6,7 @@ import com.dayuanit.emall.pojo.MallOrder;
 import com.dayuanit.emall.service.impl.OrderServiceImpl;
 import com.dayuanit.emall.util.PageUtils;
 import com.dayuanit.emall.vo.CartVO;
+import com.dayuanit.pay.dto.PayOrderDTO;
 
 import java.util.List;
 import java.util.Map;
@@ -21,4 +22,8 @@ public interface OrderService {
     Map<String, Object> pay(int mallOrderId, int checkedAddressId, int checkedPayChannel, int userId);
 
     PageUtils<MyOrderDTO> listEffectiveOrder(int currentPage, Integer userId, Integer status);
+
+    void processPayResult(int orderId, String payId);
+
+    PayOrderDTO payByDTO(int mallOrderId, int checkedAddressId, int checkedPayChannel, int userId);
 }

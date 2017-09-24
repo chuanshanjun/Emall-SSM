@@ -20,4 +20,6 @@ public interface MallOrderMapper {
                                                @Param("offset") Integer offset, @Param("pageNum") Integer pageNum);
 
     int countListOrderByUserIdAndStatus(@Param("userId") Integer userId, @Param("status") Integer status);
+
+    MallOrder getOrderById4Lock(@Param("mallOrderId") Integer mallOrderId);
 }

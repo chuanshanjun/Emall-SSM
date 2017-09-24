@@ -72,7 +72,7 @@ public class MallOrderMapperTest {
     @Test
     @Rollback
     public void testListOrderByUserIdAndStatus() {
-        List<MallOrder> list = mallOrderMapper.listOrderByUserIdAndStatus(12, null);
-        System.out.println(list.size());
+//        List<MallOrder> list = mallOrderMapper.listOrderByUserIdAndStatus(12, null);
+//        System.out.println(list.size());
     }
 }

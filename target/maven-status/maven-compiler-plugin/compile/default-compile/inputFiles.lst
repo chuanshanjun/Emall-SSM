@@ -6,7 +6,6 @@ D:\JAVAPrograms\IDEALPrograms\emall\src\main\java\com\dayuanit\emall\pojo\MallTy
 D:\JAVAPrograms\IDEALPrograms\emall\src\main\java\com\dayuanit\emall\pojo\MallUserExample.java
 D:\JAVAPrograms\IDEALPrograms\emall\src\main\java\com\dayuanit\emall\service\impl\GoodSeviceImpl.java
 D:\JAVAPrograms\IDEALPrograms\emall\src\main\java\com\dayuanit\emall\util\DateUtils.java
-D:\JAVAPrograms\IDEALPrograms\emall\src\main\java\com\dayuanit\pay\domain\PayOrder.java
 D:\JAVAPrograms\IDEALPrograms\emall\src\main\java\com\dayuanit\emall\service\impl\JedisServiceImpl.java
 D:\JAVAPrograms\IDEALPrograms\emall\src\main\java\com\dayuanit\emall\mapper\MallOrderDetailMapper.java
 D:\JAVAPrograms\IDEALPrograms\emall\src\main\java\com\dayuanit\emall\dto\GoodsOrderInfoDTO.java
@@ -30,7 +29,6 @@ D:\JAVAPrograms\IDEALPrograms\emall\src\main\java\com\dayuanit\emall\service\Ord
 D:\JAVAPrograms\IDEALPrograms\emall\src\main\java\com\dayuanit\emall\util\MoneyUtils.java
 D:\JAVAPrograms\IDEALPrograms\emall\src\main\java\com\dayuanit\emall\mapper\MallTypeMapper.java
 D:\JAVAPrograms\IDEALPrograms\emall\src\main\java\com\dayuanit\emall\controller\MallUserController.java
-D:\JAVAPrograms\IDEALPrograms\emall\src\main\java\com\dayuanit\pay\service\PayService.java
 D:\JAVAPrograms\IDEALPrograms\emall\src\main\java\com\dayuanit\emall\pojo\MallOrder.java
 D:\JAVAPrograms\IDEALPrograms\emall\src\main\java\com\dayuanit\emall\service\JedisService.java
 D:\JAVAPrograms\IDEALPrograms\emall\src\main\java\com\dayuanit\emall\pojo\MallOrderExample.java
@@ -48,7 +46,6 @@ D:\JAVAPrograms\IDEALPrograms\emall\src\main\java\com\dayuanit\emall\mapper\Prov
 D:\JAVAPrograms\IDEALPrograms\emall\src\main\java\com\dayuanit\emall\sqlmap\GeneratorSqlmap.java
 D:\JAVAPrograms\IDEALPrograms\emall\src\main\java\com\dayuanit\emall\enums\MallAddressStatus.java
 D:\JAVAPrograms\IDEALPrograms\emall\src\main\java\com\dayuanit\emall\exception\EmallException.java
-D:\JAVAPrograms\IDEALPrograms\emall\src\main\java\com\dayuanit\emall\util\ShowUtils.java
 D:\JAVAPrograms\IDEALPrograms\emall\src\main\java\com\dayuanit\emall\pojo\MallArea.java
 D:\JAVAPrograms\IDEALPrograms\emall\src\main\java\com\dayuanit\emall\pojo\MallGoodsExample.java
 D:\JAVAPrograms\IDEALPrograms\emall\src\main\java\com\dayuanit\emall\util\PageUtils.java
@@ -71,7 +68,6 @@ D:\JAVAPrograms\IDEALPrograms\emall\src\main\java\com\dayuanit\emall\service\Goo
 D:\JAVAPrograms\IDEALPrograms\emall\src\main\java\com\dayuanit\emall\mapper\MallGoodsMapper.java
 D:\JAVAPrograms\IDEALPrograms\emall\src\main\java\com\dayuanit\emall\service\MallUserService.java
 D:\JAVAPrograms\IDEALPrograms\emall\src\main\java\com\dayuanit\emall\vo\UserVo.java
-D:\JAVAPrograms\IDEALPrograms\emall\src\main\java\com\dayuanit\pay\domain\PayType.java
 D:\JAVAPrograms\IDEALPrograms\emall\src\main\java\com\dayuanit\emall\filter\CharFilter.java
 D:\JAVAPrograms\IDEALPrograms\emall\src\main\java\com\dayuanit\emall\controller\ImageCodeController.java
 D:\JAVAPrograms\IDEALPrograms\emall\src\main\java\com\dayuanit\emall\enums\OrderStatusEnum.java

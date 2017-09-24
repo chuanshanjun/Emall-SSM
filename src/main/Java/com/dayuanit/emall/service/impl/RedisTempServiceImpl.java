@@ -1,9 +1,13 @@
 package com.dayuanit.emall.service.impl;
 
 import com.dayuanit.emall.service.JedisService;
+import com.dayuanit.emall.service.OrderService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -14,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service("redisTempServiceImpl")
-public class RedisTempServiceImpl implements JedisService{
+public class RedisTempServiceImpl implements JedisService, InitializingBean{
 
     public static final Logger log = LoggerFactory.getLogger(RedisTempServiceImpl.class);
 
@@ -39,6 +43,15 @@ public class RedisTempServiceImpl implements JedisService{
      */
     @Resource(name="redisTemplate")
     private ValueOperations<String, List<Map<String, String>>> provinceOper;
+
+    /**
+     * 因为需要使用redis的队列操作所以使用List操作，而且key和value都是String
+     */
+    @Resource(name="redisTemplate")
+    private ListOperations<String, String> orderQueue;
+
+    @Autowired
+    private OrderService orderService;
 
     @Override
     public boolean haskey(String key) {
@@ -80,5 +93,53 @@ public class RedisTempServiceImpl implements JedisService{
     @Override
     public List<Map<String, String>> getAres(String key) {
         return provinceOper.get(key);
+    }
+
+    /**
+     * 操作队列 从队列右边取值
+     */
+    @Override
+    public String popOrder() {
+        String key = "dayuanit:pay:order";
+        String orderInfo = orderQueue.rightPop(key);
+        log.info(">>>orderInfo:{}", orderInfo);
+        //使用apache lang3下的String 工具类来判断orderInfo的数据是否为空
+        if (StringUtils.isBlank(orderInfo)) {
+            try {
+//                log.info(">>>队列无值，等待三秒");
+                Thread.sleep(3000);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        //数据格式bizId$payId
+        try {
+            log.info(">>>订单支付数据{}", orderInfo);
+            String msg[] = orderInfo.split("\\$");
+            String orderId = msg[0];
+            String payId = msg[1];
+
+            orderService.processPayResult(Integer.parseInt(orderId), payId);
+        } catch (Throwable e) {
+            orderQueue.leftPush(key, orderInfo);
+            log.error("处理支付成功的订单失败",e);
+        }
+
+        return null;
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while(true) {
+                    popOrder();
+                }
+            }
+        },"处理订单支付成功").start();
     }
 }

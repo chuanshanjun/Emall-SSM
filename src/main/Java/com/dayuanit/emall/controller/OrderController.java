@@ -10,6 +10,7 @@ import com.dayuanit.emall.service.OrderService;
 import com.dayuanit.emall.service.impl.OrderServiceImpl;
 import com.dayuanit.emall.util.PageUtils;
 import com.dayuanit.emall.vo.CartVO;
+import com.dayuanit.pay.dto.PayOrderDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.ibatis.annotations.Param;
 import org.slf4j.Logger;
@@ -150,9 +151,11 @@ public class OrderController extends BaseController{
     public AjaxResultDTO pay(int mallOrderId, int checkedAddressId, int checkedPayChannel, HttpServletRequest req) {
         log.info("用户确认支付:>>>>>>>>>>>mallOrderId{},checkedAddressId{},checkedPayChannel{}", mallOrderId, checkedAddressId, checkedPayChannel);
         Map<String, Object> map = null;
+//        PayOrderDTO payOrderDTO = null;
 
         try {
-            map = orderService.pay(mallOrderId, checkedAddressId, checkedPayChannel, getUserId(req));
+          map = orderService.pay(mallOrderId, checkedAddressId, checkedPayChannel, getUserId(req));
+//            payOrderDTO = orderService.payByDTO(mallOrderId, checkedAddressId, checkedPayChannel, getUserId(req));
         } catch (EmallException ee) {
             log.error("订单生成失败{}", ee.getMessage());
             return AjaxResultDTO.failed(ee.getMessage());

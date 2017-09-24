@@ -4,4 +4,7 @@
 	<jaxws:client id="helloClient" serviceClass="com.dayuanit.pay.service.PayService"
 				  address="http://localhost:8088/ws/addPayOrder" />
 
+	<!--<jaxws:client id="helloClient" serviceClass="com.dayuanit.pay.service.PayService"-->
+				  <!--address="http://localhost:8088/ws/addPayOrderByDTO" />-->
+
 </beans>

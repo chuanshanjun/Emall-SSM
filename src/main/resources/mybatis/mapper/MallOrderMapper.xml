@@ -104,4 +104,11 @@
     </trim>
   </select>
 
+  <select id="getOrderById4Lock" resultMap="mallOrderResultMap">
+    select <include refid="mall_order_filed"></include>
+    FROM mall_order
+    where id=#{mallOrderId}
+    for UPDATE;
+  </select>
+
 </mapper>

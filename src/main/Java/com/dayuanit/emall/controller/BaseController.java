@@ -2,6 +2,7 @@ package com.dayuanit.emall.controller;
 
 import com.dayuanit.emall.exception.EmallException;
 import com.dayuanit.emall.pojo.MallUser;
+import com.mysql.jdbc.Driver;
 
 import javax.crypto.ExemptionMechanismException;
 import javax.servlet.Servlet;
@@ -9,6 +10,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.sql.Connection;
+import java.sql.DriverManager;
 
 public class BaseController {
 

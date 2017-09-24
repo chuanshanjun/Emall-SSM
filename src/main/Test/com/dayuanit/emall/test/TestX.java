@@ -48,9 +48,9 @@ public class TestX {
                 list.remove(x);
         }
 
-        String str = new String("abc");
-        String str1 = new String("abc");
-        System.out.println(str.equals(str1));
+//        String str = new String("abc");
+//        String str1 = new String("abc");
+//        System.out.println(str.equals(str1));
     }
 
 }

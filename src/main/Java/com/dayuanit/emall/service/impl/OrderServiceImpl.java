@@ -21,6 +21,7 @@ import com.dayuanit.emall.util.MoneyUtils;
 import com.dayuanit.emall.util.PageUtils;
 import com.dayuanit.emall.vo.CartVO;
 import com.dayuanit.pay.domain.PayOrder;
+import com.dayuanit.pay.dto.PayOrderDTO;
 import com.dayuanit.pay.service.PayService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -304,7 +305,7 @@ public class OrderServiceImpl implements OrderService{
         }
 
         /**
-         * 请求支付系统 获取支付地址
+         * 请求支付系统 获取支付地址，本需要相应支付系统的domain和service接口，后将相应的文件打包成jar包上传到私服
          */
 
         PayOrder payOrder = new PayOrder();
@@ -314,7 +315,7 @@ public class OrderServiceImpl implements OrderService{
         payOrder.setDetailMsg("大猿商城");
         payOrder.setPayChannel(mallOrder.getPayChannel());
         payOrder.setUserId(mallOrder.getUserId());
-
+        log.info(">>>payOrder{}", payOrder.getAmount());
         /**
          * 调用支付系统的生成支付订单方法
          */
@@ -343,10 +344,6 @@ public class OrderServiceImpl implements OrderService{
             myOrderDTO.setUserRealName(mo.getRealName());
             myOrderDTO.setStatus(OrderStatusEnum.getEnum(mo.getStatus()).getV());
             myOrderDTO.setCreateTime(DateUtils.dateToString(mo.getCreateTime()));
-
-            log.info(">>>mo.getCreateTime(){}", mo.getCreateTime());
-            log.info(">>>myOrderDTO.getCreateTime(){}", myOrderDTO.getCreateTime());
-
             List<MallOrderDetail> listMallOrderDetail = mallOrderDetailMapper.listMallOrderDetail(mo.getId());
             List<MyOrderDTO.OrderGoods> listOrderGoods = new ArrayList<>(listMallOrderDetail.size());
 
@@ -367,4 +364,104 @@ public class OrderServiceImpl implements OrderService{
 
         return pageUtils;
     }
+
+    /**
+     * 在对订单进行处理前加锁
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void processPayResult(int orderId, String payId) {
+        MallOrder mallOrder = mallOrderMapper.getOrderById4Lock(orderId);
+        if (null == mallOrder) {
+            return;
+        }
+
+        //如果订单不是待付款的都退回去
+        if (mallOrder.getStatus() != OrderStatusEnum.WAIT_PAY.getK()) {
+            return;
+        }
+
+        int rows = mallOrderMapper.changeOrderStatus(OrderStatusEnum.PAID.getK(), mallOrder.getUserId(), orderId);
+        if (1 != rows) {
+            throw new EmallException("订单更新失败");
+        }
+
+        log.info(">>>订单{}支付成功，请及时发货", orderId);
+    }
+
+    @Override
+    public PayOrderDTO payByDTO(int mallOrderId, int checkedAddressId, int checkedPayChannel, int userId) {
+        log.info(">>>>>>>>>>>>>>>>>>>>>>checkedAddressId:{}", checkedAddressId);
+        MallOrder mallOrder = mallOrderMapper.getOrderById(mallOrderId);
+        if (null == mallOrder) {
+            throw new EmallException("订单不存在");
+        }
+
+        if (mallOrder.getUserId() != userId) {
+            throw new EmallException("订单不属于你");
+        }
+
+        if (mallOrder.getStatus() != OrderStatusEnum.WAIT_SETTLEMENT.getK() &&
+                mallOrder.getStatus() != OrderStatusEnum.WAIT_PAY.getK()) {
+            throw new EmallException("订单生成失败");
+        }
+
+        //此处以订单修改的时间为订单失效时间的起点
+        Date orderTime = mallOrder.getModifyTime();
+
+        //Calendar是工具类 单例模式
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(orderTime);
+        calendar.add(Calendar.MINUTE, 30);//增加三十分钟，如果减少时间-30
+
+        Date expDate = calendar.getTime();
+
+        if (new Date().after(expDate)) {//现在的时间在订单失效之后
+            throw new EmallException("订单失效");
+        }
+
+        if (mallOrder.getStatus() == OrderStatusEnum.WAIT_SETTLEMENT.getK()) {
+            int rows = mallOrderMapper.changeOrderStatus(OrderStatusEnum.WAIT_PAY.getK(), userId, mallOrderId);
+            if (rows != 1) {
+                throw new EmallException("订单更新失败");
+            }
+        }
+
+        mallOrder.setPayChannel(checkedPayChannel);//设置支付方式
+
+        MallAddress mallAddress =mallAddressMapper.getAddressById(checkedAddressId);
+
+        mallOrder.setProvince(mallAddress.getProvinceWord());
+        mallOrder.setCity(mallAddress.getCityWord());
+        mallOrder.setArea(mallAddress.getAreaWord());
+        mallOrder.setPhone(mallAddress.getCellphoneNum());
+        mallOrder.setRealName(mallAddress.getRealName());
+        mallOrder.setDetail(mallAddress.getAccurateAddress());
+        log.info(mallAddress.getAccurateAddress());
+        int rows = mallOrderMapper.updateOrderInfo(mallOrder);
+        if (rows != 1) {
+            throw new EmallException("订单生成失败");
+        }
+
+        /**
+         * 请求支付系统 获取支付地址，本需要相应支付系统的domain和service接口，后将相应的文件打包成jar包上传到私服
+         */
+
+        PayOrder payOrder = new PayOrder();
+        payOrder.setAmount(mallOrder.getAmount());
+        payOrder.setBankId(null);
+        payOrder.setBizId(String.valueOf(mallOrder.getId()));//订单ID
+        payOrder.setDetailMsg("大猿商城");
+        payOrder.setPayChannel(mallOrder.getPayChannel());
+        payOrder.setUserId(mallOrder.getUserId());
+
+        /**
+         * 调用支付系统的生成支付订单方法
+         */
+
+        log.info(">>>payOrder:{}", payOrder.getAmount());
+        PayOrderDTO payOrderDTO = payService.addPayOrderByDTO(payOrder);
+        return payOrderDTO;
+    }
+
 }

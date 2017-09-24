@@ -13,8 +13,6 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import static com.sun.corba.se.impl.util.RepositoryId.cache;
-
 @Controller
 @RequestMapping("/code")
 public class ImageCodeController extends BaseController{

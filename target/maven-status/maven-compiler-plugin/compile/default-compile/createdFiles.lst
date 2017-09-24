@@ -32,7 +32,6 @@ com\dayuanit\emall\pojo\MallTypeExample$GeneratedCriteria.class
 com\dayuanit\emall\dto\AddressDTO.class
 com\dayuanit\emall\pojo\MallUserExample$Criteria.class
 com\dayuanit\emall\service\ProvinceAndCityService.class
-com\dayuanit\emall\util\ShowUtils.class
 com\dayuanit\emall\service\impl\MallUserServiceImpl.class
 com\dayuanit\emall\service\impl\OrderServiceImpl$BuyGoodDetail.class
 com\dayuanit\emall\util\DateUtils.class
@@ -50,7 +49,6 @@ com\dayuanit\emall\exception\EmallException.class
 com\dayuanit\emall\filter\CharFilter.class
 com\dayuanit\emall\pojo\MallGoodsExample$Criterion.class
 com\dayuanit\emall\controller\MallUserController.class
-com\dayuanit\pay\service\PayService.class
 com\dayuanit\emall\pojo\MallGoodsExample$Criteria.class
 com\dayuanit\emall\pojo\MallProvinceExample.class
 com\dayuanit\emall\pojo\MallShoppingCart.class
@@ -77,7 +75,9 @@ com\dayuanit\emall\controller\GoodIntroduce.class
 com\dayuanit\emall\pojo\MallShoppingCartExample$GeneratedCriteria.class
 com\dayuanit\emall\service\GoodService.class
 com\dayuanit\emall\vo\AddressVO.class
+com\dayuanit\emall\service\impl\RedisTempServiceImpl$1.class
 com\dayuanit\emall\datautils\JedisUtils.class
+com\dayuanit\emall\dto\GoodsOrderInfoDTO.class
 com\dayuanit\emall\pojo\MallCityExample$Criteria.class
 com\dayuanit\emall\mapper\MallOrderMapper.class
 com\dayuanit\emall\pojo\MallOrderExample.class
@@ -97,11 +97,9 @@ com\dayuanit\emall\pojo\MallCityExample$Criterion.class
 com\dayuanit\emall\pojo\MallProvinceExample$GeneratedCriteria.class
 com\dayuanit\emall\service\ShowService.class
 com\dayuanit\emall\controller\OrderController.class
-com\dayuanit\pay\domain\PayOrder.class
 com\dayuanit\emall\pojo\MallUserExample$Criterion.class
 com\dayuanit\emall\pojo\MallOrderDetail.class
 com\dayuanit\emall\pojo\MallCityExample$GeneratedCriteria.class
 com\dayuanit\emall\pojo\MallCityExample.class
 com\dayuanit\emall\pojo\MallOrderExample$GeneratedCriteria.class
 com\dayuanit\emall\service\impl\ShowServiceImpl.class
-com\dayuanit\pay\domain\PayType.class

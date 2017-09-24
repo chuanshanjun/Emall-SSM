@@ -121,4 +121,9 @@ public class JedisServiceImpl implements JedisService {
         }
     }
 
+    @Override
+    public String popOrder() {
+        return null;
+    }
+
 }
