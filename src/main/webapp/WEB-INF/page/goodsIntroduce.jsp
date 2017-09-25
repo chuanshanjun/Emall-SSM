@@ -78,6 +78,7 @@
 		</div>
 	</div>
 </div>
+	<input type="hidden" id="cartToken" value="${cart_token}">
 
 <div id="footer">
 	<p>慕课简介|慕课公告| 招纳贤士| 联系我们|客服热线：400-675-1234</p>
@@ -118,7 +119,8 @@
             async:true,    //或false,是否异步
             data:{
                 goodsId:$('#goodsId').val(),
-                goodsCounts:$('#goodsCounts').val()
+                goodsCounts:$('#goodsCounts').val(),
+                cartToken:$('#cartToken').val()
             },
             timeout:5000,    //超时时间
             dataType:'json',    //返回的数据格式：json/xml/html/script/jsonp/text

@@ -10,6 +10,10 @@ import com.mysql.jdbc.log.LogFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.data.redis.connection.RedisConnection;
+import org.springframework.data.redis.core.RedisCallback;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -17,6 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Controller
 public class ShopCartController extends BaseController{
@@ -29,13 +34,48 @@ public class ShopCartController extends BaseController{
     @Autowired
     private CartService cartService;
 
+    @Autowired
+    private RedisTemplate<String, Object> redisTemplate;
+
     /**
-     * 将商品详情页的商品信息加到购物车
+     * 将商品详情页的商品信息加到购物车，第一种防止重复提交的方法
+     * 使用redis中的setNX无法覆盖已有key的属性来防止重复提交
      */
     @RequestMapping("/shopCart/toOrder")
     @ResponseBody
-    public AjaxResultDTO toOrder(String goodsId, String goodsCounts, HttpServletRequest req) {
+    public AjaxResultDTO toOrder(String cartToken, String goodsId, String goodsCounts, HttpServletRequest req) {
+        log.info(">>>cartToken:{}", cartToken);
+
+        String msg = (String)req.getSession().getAttribute("cart_token");
+
+        if (null == msg) {
+            return AjaxResultDTO.failed("重复提交，请稍后重试");
+        }
+
+        if (!msg.equals(cartToken)) {
+            return AjaxResultDTO.failed("重复提交，请稍后重试");
+        }
+
+        //key值由用户ID和商品ID构成
+        String cartKey = "%s:%s";
+        String key = String.format(cartKey, getUserId(req), goodsId);
+
         try {
+
+            //setFlag 判断它里面有没有设置成功
+            boolean setFlag = redisTemplate.execute(new RedisCallback<Boolean>() {
+
+                @Override
+                public Boolean doInRedis(RedisConnection redisConnection) throws DataAccessException {
+                    return redisConnection.setNX(key.getBytes(), "xxx".getBytes());//入参需要bytes[]数组,setNX是原子性的
+                }//就算有好多线程来同时执行只有一个能set成功
+            });
+
+            if (!setFlag) {
+                return AjaxResultDTO.failed("重复提交，请稍后在试");
+            }
+
+
             cartService.addCart(getUserId(req), Integer.parseInt(goodsId), Integer.parseInt(goodsCounts));
         } catch (EmallException ee) {
             log.info("购物车增加失败:{}", ee.getMessage());
@@ -43,6 +83,9 @@ public class ShopCartController extends BaseController{
         } catch (Exception e) {
             log.info("购物车增加异常:{}", e);
             return AjaxResultDTO.failed("系统故障请联系客服");
+        } finally {//设置key的过期时间，10秒钟自动消失
+            req.getSession().removeAttribute("cart_token");//用完一次后就把token从session中移除
+            redisTemplate.opsForValue().set(key, "xxx", 10, TimeUnit.SECONDS);
         }
 
         return AjaxResultDTO.success();

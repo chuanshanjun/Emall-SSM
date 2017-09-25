@@ -464,4 +464,57 @@ public class OrderServiceImpl implements OrderService{
         return payOrderDTO;
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Map<String, Object> payFromOrder(int mallOrderId, int userId) {
+        MallOrder mallOrder = mallOrderMapper.getOrderById4Lock(mallOrderId);
+        if (null == mallOrder) {
+            throw new EmallException("订单不存在");
+        }
+
+        if (mallOrder.getUserId() != userId) {
+            throw new EmallException("订单不属于你");
+        }
+
+        if (mallOrder.getStatus() != OrderStatusEnum.WAIT_PAY.getK()) {
+            throw new EmallException("订单不能付款");
+        }
+
+        ////此处以订单修改的时间为订单失效时间的起点
+        Date orderTime = mallOrder.getModifyTime();
+        //Calendar是工具类 单例模式
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(orderTime);
+        //增加三十分钟，如果减少时间-30
+        calendar.add(Calendar.MINUTE, 30);
+
+        Date expDate = calendar.getTime();
+        //现在的时间在订单失效之后
+        if (new Date().after(expDate)) {
+            throw new EmallException("订单失效");
+        }
+
+        PayOrder payOrder = new PayOrder();
+        payOrder.setAmount(mallOrder.getAmount());
+        payOrder.setBankId(null);
+        payOrder.setBizId(String.valueOf(mallOrder.getId()));//订单ID
+        payOrder.setDetailMsg("大猿商城");
+        payOrder.setPayChannel(mallOrder.getPayChannel());
+        payOrder.setUserId(mallOrder.getUserId());
+
+        Map<String, Object> map = payService.addPayOrder(payOrder);
+
+        //按照约定1001指该笔订单已经支付成功过了，那么我们将修改他的商户订单
+        if (null != map.get("code") && map.get("code").toString().equals("1001")) {
+            processPayResult(mallOrderId, map.get("payId").toString());
+        }
+
+        //其他状况如支付订单失效，或者支付中则将其信息返回
+        if (null != map.get("code") && !map.get("code").toString().equals("1000")) {
+            throw new EmallException(map.get("message").toString());
+        }
+
+        return map;
+    }
+
 }

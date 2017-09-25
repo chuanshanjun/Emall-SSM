@@ -166,4 +166,20 @@ public class OrderController extends BaseController{
 
         return AjaxResultDTO.success(map);
     }
+
+    @RequestMapping("/order/orderPay")
+    @ResponseBody
+    public AjaxResultDTO orderPay(int orderId, HttpServletRequest req) {
+
+        try {
+            Map<String, Object> map = orderService.payFromOrder(orderId, getUserId(req));
+            return AjaxResultDTO.success(map);
+        } catch(EmallException ee) {
+            log.error(">>>订单支付失败:{}", ee.getMessage());
+            return AjaxResultDTO.failed(ee.getMessage());
+        } catch(Exception e) {
+            log.error("支付失败", e);
+            return AjaxResultDTO.failed("支付失败，请联系客服");
+        }
+    }
 }

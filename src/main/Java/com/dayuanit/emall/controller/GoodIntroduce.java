@@ -11,6 +11,8 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.util.UUID;
 
 @Controller
 @RequestMapping("/good")
@@ -21,11 +23,16 @@ public class GoodIntroduce extends BaseController{
     @Autowired
     private GoodService goodService;
 
+    /**
+     * 第二种防止重复提交的方法在即将跳转到商品展示页面的时候在session中设置token
+     */
     @RequestMapping("/toGoodsIntroduce")
-    public String toGoodsIntroduce(String goodId, ModelMap mm) {
+    public String toGoodsIntroduce(String goodId, ModelMap mm, HttpSession session) {
         try {
             MallGoods mallGood = goodService.getGoodsById(Integer.parseInt(goodId));
             mm.addAttribute("mallGood", mallGood);
+            String token = UUID.randomUUID().toString();
+            session.setAttribute("cart_token", token);
         } catch (EmallException ee) {
             log.error("查询商品失败:{}", ee.getMessage());
         } catch (Exception e) {
@@ -52,3 +59,4 @@ public class GoodIntroduce extends BaseController{
 //        return "goodsIntroduce";//去往商品详情页
 //    }
 }
+

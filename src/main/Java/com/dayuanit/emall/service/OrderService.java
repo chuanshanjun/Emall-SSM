@@ -26,4 +26,6 @@ public interface OrderService {
     void processPayResult(int orderId, String payId);
 
     PayOrderDTO payByDTO(int mallOrderId, int checkedAddressId, int checkedPayChannel, int userId);
+
+    Map<String, Object> payFromOrder(int mallOrderId, int userId);
 }

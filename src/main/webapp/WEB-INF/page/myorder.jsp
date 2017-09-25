@@ -61,7 +61,7 @@
 							</div>
 
 							<p class="fr">
-								<a href="myprod.html">立即支付</a>
+								<a href="###" v-if="order.status == '待付款'" v-on:click="orderPay(index)">立即支付</a>
 								<a href="orderxq.html">订单详情</a>
 							</p>
 						</div>
@@ -91,12 +91,58 @@
                     el : '#ordershow',
                     data : {
                         orders : []
-                    }
+                    },
+					methods : {
+                        orderPay : function (index) {
+							var _order = this.orders[index];
+							toOrderPay(_order.id);
+                        }
+					}
                 });
 
 			    initOrderStatus();
                 loadOrders(currentPage);
             });
+
+			function toOrderPay(orderId) {
+                $.ajax({
+                    url:'/order/orderPay.do',
+                    type:'POST', //GET
+                    async:false,    //或false,是否异步
+                    data:{
+                        orderId : orderId
+                    },
+                    timeout:5000,    //超时时间
+                    dataType:'json',    //返回的数据格式：json/xml/html/script/jsonp/text
+                    beforeSend:function(xhr){
+                        console.log(xhr)
+                        console.log('发送前')
+                    },
+                    success:function(data,textStatus,jqXHR){
+                        if (!data.success) {
+                            alert(data.message);
+                            return;
+                        }
+
+                        alert(data.data.payOrderUrl);
+                        if (data.data.code == '1001') {//code码是1001表示已经支付过了，那么页面重新刷新次
+                            window.location.reload();
+                            return false;
+                        }
+
+                        window.location.href=data.data.payOrderUrl;
+
+                    },
+                    error:function(xhr,textStatus){
+                        console.log('错误')
+                        console.log(xhr)
+                        console.log(textStatus)
+                    },
+                    complete:function(){
+                        console.log('结束')
+                    }
+                });
+            }
 			
 			function initOrderStatus() {
 				$('#wa li').click(function () {
