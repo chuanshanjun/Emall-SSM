@@ -55,7 +55,7 @@
 		</dl>
 			<div class="selection">
 				<dl>
-					<dt>数量</dt>
+					<dt>库存${mallGood.inStock}</dt>
 					<dd class="clearfix" id="app">
 						<div class="num_select">
 							<span onclick="minus();">-</span>
@@ -69,10 +69,10 @@
 		<div class="buy">
 			<h4 class="selected">已选择<span>“白色|WIFI 16G”</span></h4>
 			<div class="buy_btn" id="app2">
-				<a onclick="addCart();">加入购物车</a>
+				<a href="###" onclick="addCart();">加入购物车</a>
 				<input type="hidden" id="goodsId" name="goodsId" value=${mallGood.id}>
 				<span class="ver_line"></span>
-				<a onclick="buy();">立即购买</a>
+				<a href="###" onclick="buy();">立即购买</a>
 			</div>
 			<p class="notice">注意：此商品可提供普通发票，不提供增值税发票。</p>
 		</div>
@@ -154,12 +154,12 @@
 
     function buy() {
         $.ajax({
-            url:'/order/toOrder.do',
+            url:'/order/createOrder4BuyNow.do',
             type:'POST', //GET
             async:true,    //或false,是否异步
             data:{
                 goodsId:$('#goodsId').val(),
-                goodsCounts:$('#goodsCounts').val()
+                num:$('#goodsCounts').val()
             },
             timeout:5000,    //超时时间
             dataType:'json',    //返回的数据格式：json/xml/html/script/jsonp/text
@@ -176,9 +176,7 @@
                     return;
                 }
 
-                //window.location.href='/user/toUserCenter.do';
-                //window.location.href='/';
-                window.location.href='/order/order.do';
+                window.location.href = '/order/toOrder.do?mallOrderId=' + data.data.id;
 
             },
             error:function(xhr,textStatus){
@@ -193,8 +191,11 @@
     }
 
 	function plus() {
+	    if (vm.a >= 9) {
+	        return false;
+		}
 	    vm.plus();
-	    alert(vm.a);
+//	    alert(vm.a);
 	}
 
     function minus() {
@@ -203,7 +204,7 @@
 		}
 
 		vm.minus();
-	    alert(vm.a);
+//	    alert(vm.a);
     }
 
 	</script>

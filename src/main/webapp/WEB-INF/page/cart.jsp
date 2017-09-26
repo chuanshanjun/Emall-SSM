@@ -334,7 +334,7 @@
 			if ($(this).is(':checked')) {
 			    var cartIndex = $(this).attr('id');
 			    var cartGood = cartGoodsShow.category[cartIndex];
-			    buyGoodArray.push({goodId : cartGood.goodsId, goodCounts : cartGood.counts});//将具体货物的信息放到数组中
+			    buyGoodArray.push({goodId : cartGood.goodsId, goodCounts : cartGood.counts, cartId : cartGood.id});//将具体货物的信息放到数组中
 			}
         });
 

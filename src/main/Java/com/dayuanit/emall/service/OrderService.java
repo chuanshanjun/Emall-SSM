@@ -15,7 +15,7 @@ public interface OrderService {
 
     List<OrderServiceImpl.BuyGoodDetail> createOrderFromCart(String buyMsg, int userId);
 
-    MallOrder createOrderFromCart(List<CartVO> vos, int userId);
+    MallOrder createOrderFromCart(List<CartVO> vos, int userId, int orderFrom);
 
     GoodsOrderInfoDTO loadOrderInfo(int mallOrderId, int userId);
 

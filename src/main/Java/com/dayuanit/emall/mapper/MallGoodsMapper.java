@@ -13,4 +13,8 @@ public interface MallGoodsMapper {
     List listGoods(@Param("typeId") Integer typeId);
 
     MallGoods getGoodById(@Param("goodId") Integer goodId);
+
+    int subGoodsNum(@Param("goodId") Integer goodId, @Param("counts") Integer counts);
+
+    MallGoods getGoodById4Update(@Param("goodId") Integer goodId);
 }

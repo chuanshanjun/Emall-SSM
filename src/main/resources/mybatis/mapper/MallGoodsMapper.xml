@@ -46,4 +46,16 @@
     where id=#{goodId};
   </select>
 
+  <update id="subGoodsNum">
+    UPDATE mall_goods SET in_stock=in_stock+#{counts}
+    WHERE id=#{goodId};
+  </update>
+
+  <select id="getGoodById4Update" resultMap="MallGoodsResultMap">
+    SELECT <include refid="MallGoods_Column_List"></include>
+    from mall_goods
+    where id=#{goodId}
+    FOR UPDATE;
+  </select>
+
 </mapper>

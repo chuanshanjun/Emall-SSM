@@ -2,6 +2,7 @@ package com.dayuanit.emall.service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public interface JedisService {
 
@@ -20,4 +21,10 @@ public interface JedisService {
     List<Map<String, String>> getAres(String key);
 
     String popOrder();
+
+    void saveCartId(List<Integer> cartIds, int userId);
+
+    Set<Integer> getCartId(int userId);
+
+    void delKey(String key);
 }

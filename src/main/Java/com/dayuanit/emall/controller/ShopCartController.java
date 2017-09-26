@@ -85,7 +85,7 @@ public class ShopCartController extends BaseController{
             return AjaxResultDTO.failed("系统故障请联系客服");
         } finally {//设置key的过期时间，10秒钟自动消失
             req.getSession().removeAttribute("cart_token");//用完一次后就把token从session中移除
-            redisTemplate.opsForValue().set(key, "xxx", 10, TimeUnit.SECONDS);
+            redisTemplate.opsForValue().set(key, "xxx", 10, TimeUnit.SECONDS);//为何设置超时时间不在内部类中做呢？
         }
 
         return AjaxResultDTO.success();

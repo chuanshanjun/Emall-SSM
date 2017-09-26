@@ -10,6 +10,7 @@ import redis.clients.jedis.Jedis;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Service("jedisServiceImpl")//因为有两个实现类继承JedisService所以要用名字区分开来
 public class JedisServiceImpl implements JedisService {
@@ -124,6 +125,21 @@ public class JedisServiceImpl implements JedisService {
     @Override
     public String popOrder() {
         return null;
+    }
+
+    @Override
+    public void saveCartId(List<Integer> cartIds, int userId) {
+
+    }
+
+    @Override
+    public Set<Integer> getCartId(int userId) {
+        return null;
+    }
+
+    @Override
+    public void delKey(String key) {
+
     }
 
 }

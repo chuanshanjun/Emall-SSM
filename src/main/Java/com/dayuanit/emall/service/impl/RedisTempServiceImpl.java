@@ -7,15 +7,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.ListOperations;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.dao.DataAccessException;
+import org.springframework.data.redis.core.*;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 @Service("redisTempServiceImpl")
 public class RedisTempServiceImpl implements JedisService, InitializingBean{
@@ -32,7 +32,7 @@ public class RedisTempServiceImpl implements JedisService, InitializingBean{
 
     /**
      * StringRedisTemplate继承RedisTemplate，并且自带String序列化功能，redis最终放的东西如对象之类的最终都要序列化成字符串再存储
-     * StringRedisTemplate构造的时候帮你序列化好，但此时因为我们的值不需要String序列化所以不使用StringRedisTemplate
+     * StringRedisTemplate构造的时候帮你序列化好，但此时因为我们的value值不需要String序列化所以不使用StringRedisTemplate
      *
      * @Autowired
      * private StringRedisTemplate<String, Object> stringRedisTemplate;
@@ -49,6 +49,9 @@ public class RedisTempServiceImpl implements JedisService, InitializingBean{
      */
     @Resource(name="redisTemplate")
     private ListOperations<String, String> orderQueue;
+
+    @Resource(name="redisTemplate")
+    private SetOperations<String, Integer> cartSet;
 
     @Autowired
     private OrderService orderService;
@@ -141,5 +144,41 @@ public class RedisTempServiceImpl implements JedisService, InitializingBean{
                 }
             }
         },"处理订单支付成功").start();
+    }
+
+    @Override
+    public void saveCartId(List<Integer> cartIds, int userId) {
+        String key = "card:cach:" + userId;//设置key的规则
+        /**
+         * 此处为何要新开一个SessionCallBack
+         */
+        redisTemplate.execute(new SessionCallback() {
+            @Override
+            public Object execute(RedisOperations redisOperations) throws DataAccessException {
+                long num = redisOperations.opsForSet().add(key, cartIds.toArray());
+                redisOperations.expire(key, 30, TimeUnit.MINUTES);//设置key的过期时间
+
+                log.info(">>>购物车信息缓存至redis", num);
+                return num;//此处返回的是什么
+            }
+        });
+
+    }
+
+    /**
+     * 此处可以直接使用cartSet.members(key)获取value为何上面不能直接set
+     */
+    @Override
+    public Set<Integer> getCartId(int userId) {
+        String key = "card:cach:" + userId;
+        return cartSet.members(key);
+    }
+
+    /**
+     * delete 是redisTemplate
+     */
+    @Override
+    public void delKey(String key) {
+        redisTemplate.delete(key);
     }
 }

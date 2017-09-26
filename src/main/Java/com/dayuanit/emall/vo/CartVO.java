@@ -6,6 +6,16 @@ public class CartVO {
 
     private int goodCounts;
 
+    private int cartId;
+
+    public int getCartId() {
+        return cartId;
+    }
+
+    public void setCartId(int cartId) {
+        this.cartId = cartId;
+    }
+
     public int getGoodId() {
         return goodId;
     }

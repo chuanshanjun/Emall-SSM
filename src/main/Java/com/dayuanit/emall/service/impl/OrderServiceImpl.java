@@ -15,6 +15,7 @@ import com.dayuanit.emall.pojo.MallAddress;
 import com.dayuanit.emall.pojo.MallGoods;
 import com.dayuanit.emall.pojo.MallOrder;
 import com.dayuanit.emall.pojo.MallOrderDetail;
+import com.dayuanit.emall.service.GoodService;
 import com.dayuanit.emall.service.OrderService;
 import com.dayuanit.emall.util.DateUtils;
 import com.dayuanit.emall.util.MoneyUtils;
@@ -51,6 +52,9 @@ public class OrderServiceImpl implements OrderService{
 
     @Autowired
     private PayService payService;
+
+    @Autowired
+    private GoodService goodService;
 
     @Override
     public List<BuyGoodDetail> createOrderFromCart(String buyMsg, int userId) {
@@ -96,7 +100,7 @@ public class OrderServiceImpl implements OrderService{
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public MallOrder createOrderFromCart(List<CartVO> vos, int userId) {
+    public MallOrder createOrderFromCart(List<CartVO> vos, int userId, int orderFrom) {
         //定义好订单明细的List并定义好了List的长度节省空间
         List<MallOrderDetail> goodList = new ArrayList<MallOrderDetail>(vos.size());
 
@@ -250,7 +254,11 @@ public class OrderServiceImpl implements OrderService{
         }
     }
 
+    /**
+     * 开启事物防止支付完后的减库存操作失败
+     */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Map<String, Object> pay(int mallOrderId, int checkedAddressId, int checkedPayChannel, int userId) {
         log.info(">>>>>>>>>>>>>>>>>>>>>>checkedAddressId:{}", checkedAddressId);
         MallOrder mallOrder = mallOrderMapper.getOrderById(mallOrderId);
@@ -320,6 +328,12 @@ public class OrderServiceImpl implements OrderService{
          * 调用支付系统的生成支付订单方法
          */
         Map<String, Object> map = payService.addPayOrder(payOrder);
+
+        List<MallOrderDetail> listMallOrderDetail = mallOrderDetailMapper.listMallOrderDetail(mallOrderId);
+        for (MallOrderDetail mallOrderDetail : listMallOrderDetail) {
+            goodService.subGoodsNum(mallOrderDetail.getGoodId(), mallOrderDetail.getCounts());
+        }
+
         return map;
     }
 

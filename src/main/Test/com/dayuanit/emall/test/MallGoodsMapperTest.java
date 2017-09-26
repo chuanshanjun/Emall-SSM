@@ -58,4 +58,11 @@ public class MallGoodsMapperTest {
         MallGoods mallGoods = mallGoodsMapper.getGoodById(1);
 //        assertEquals(4768, (int)mallGoods.getPrice());
     }
+
+    @Test
+    @Rollback
+    public void testSubGoodsNum() {
+        int rows = mallGoodsMapper.subGoodsNum(1, 100);
+        assertEquals(1, rows);
+    }
 }
