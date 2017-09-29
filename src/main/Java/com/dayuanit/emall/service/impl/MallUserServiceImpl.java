@@ -8,7 +8,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-@Service
+@Service("mallUserService")
 public class MallUserServiceImpl implements MallUserService{
 
     @Autowired
@@ -79,5 +79,10 @@ public class MallUserServiceImpl implements MallUserService{
         }
 
         return mallUser;
+    }
+
+    @Override
+    public MallUser getMallUser(String username) {
+        return mallUserMapper.getMallUserByUserName(username);
     }
 }

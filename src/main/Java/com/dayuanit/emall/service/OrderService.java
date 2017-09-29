@@ -28,4 +28,6 @@ public interface OrderService {
     PayOrderDTO payByDTO(int mallOrderId, int checkedAddressId, int checkedPayChannel, int userId);
 
     Map<String, Object> payFromOrder(int mallOrderId, int userId);
+
+    void processExpiredOrder(MallOrder mallOrder);
 }

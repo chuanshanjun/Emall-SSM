@@ -46,7 +46,7 @@
     where id=#{goodId};
   </select>
 
-  <update id="subGoodsNum">
+  <update id="changeGoodsNum">
     UPDATE mall_goods SET in_stock=in_stock+#{counts}
     WHERE id=#{goodId};
   </update>

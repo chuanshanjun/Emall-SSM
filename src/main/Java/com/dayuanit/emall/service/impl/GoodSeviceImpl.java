@@ -45,7 +45,19 @@ public class GoodSeviceImpl implements GoodService{
         }
 
         log.info(">>>删除库存的信息: goodId={},goodnum={}", goodId, count);
-        int rows = mallGoodsMapper.subGoodsNum(goodId, -count);
+        int rows = mallGoodsMapper.changeGoodsNum(goodId, -count);
+        if (1 != rows) {
+            throw new EmallException("减库存失败");
+        }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void addGoodsNum(int goodId, int count) {
+        MallGoods mallGoods = mallGoodsMapper.getGoodById4Update(goodId);
+
+        log.info(">>>增加库存的信息: goodId={},goodnum={}", goodId, count);
+        int rows = mallGoodsMapper.changeGoodsNum(goodId, count);
         if (1 != rows) {
             throw new EmallException("减库存失败");
         }

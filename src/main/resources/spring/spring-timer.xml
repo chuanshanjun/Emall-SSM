@@ -9,17 +9,18 @@
         http://www.springframework.org/schema/tx/spring-tx.xsd
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context.xsd">
-
+	<!--一般定时器单独放个服务器跑，并把定时器的代码单独拉个工程做-->
 	<!-- job是奴隶真正干活的-->
 	<bean id="transferJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-		<property name="targetObject" ref="transferTask"/>
+		<property name="targetObject" ref="checkExpiredOrderTask"/>
 		<property name="targetMethod" value="doTask"/>
+		<property name="concurrent" value="false"/><!--定时器尽量置为单线程-->
 	</bean>
 
 	<!-- tigger(跳跳虎)监理，监督奴隶干活-->
 	<bean id="transferTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
 		<property name="jobDetail" ref="transferJob"/>
-		<property name="cronExpression" value="0/15 * * * * ?"/><!--10代表10秒-->
+		<property name="cronExpression" value="0/5 * * * * ?"/><!--10代表10秒-->
 	</bean>
 
 	<!-- scheduler大老板 一个老板可以管几个监理，但一个监理对应一个奴隶-->

@@ -86,6 +86,13 @@
     order by id DESC limit #{offset},#{pageNum};
   </select>
 
+  <select id="listOrderByStatus" resultMap="mallOrderResultMap">
+    SELECT <include refid="mall_order_filed"></include>
+    from mall_order
+    WHERE status=#{status}
+    limit #{offset},#{pageNum};
+  </select>
+
   <select id="countListOrderByUserIdAndStatus" resultType="int">
     SELECT count(*)
     from mall_order
@@ -109,6 +116,12 @@
     FROM mall_order
     where id=#{mallOrderId}
     for UPDATE;
+  </select>
+
+  <select id="listExpiredOrder" resultMap="mallOrderResultMap">
+    SELECT <include refid="mall_order_filed"></include>
+    FROM mall_order
+    WHERE status = 1;
   </select>
 
 </mapper>

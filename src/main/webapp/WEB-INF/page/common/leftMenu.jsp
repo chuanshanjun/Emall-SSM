@@ -1,9 +1,9 @@
 <%@page contentType="text/html; charset=utf-8" %>
-
+<%@ taglib prefix="shiro" uri="http://shiro.apache.org/tags" %>
 <div class="zuo fl">
     <h3>
         <a href="#"><img src="/imgcart/tx.png"/></a>
-        <p class="clearfix"><span class="fl">[羊羊羊]</span><span class="fr">[退出登录]</span></p>
+        <p class="clearfix"><span class="fl"><shiro:principal/></span><span class="fr"><a href="/malluser/logout.do">[退出登录]</span></p>
     </h3>
     <div>
         <h4>我的交易</h4>

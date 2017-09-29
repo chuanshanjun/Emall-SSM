@@ -9,4 +9,6 @@ public interface MallUserService {
 
     MallUser login(String username, String password);
 
+    MallUser getMallUser(String username);
+
 }

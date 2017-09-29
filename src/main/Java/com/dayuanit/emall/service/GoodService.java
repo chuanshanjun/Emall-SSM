@@ -7,4 +7,6 @@ public interface GoodService {
     MallGoods getGoodsById(int goodId);
 
     void subGoodsNum(int goodId, int count);
+
+    void addGoodsNum(int goodId, int count);
 }

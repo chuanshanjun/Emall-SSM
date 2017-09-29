@@ -31,6 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.crypto.ExemptionMechanismException;
 import java.util.*;
 
 @Service
@@ -529,6 +530,52 @@ public class OrderServiceImpl implements OrderService{
         }
 
         return map;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void processExpiredOrder(MallOrder mallOrder) {
+        //开启事务后再使用悲观锁再查询下
+        MallOrder mallOrder1 = mallOrderMapper.getOrderById4Lock(mallOrder.getId());
+        if (null == mallOrder1) {
+            throw new EmallException("订单不存在");
+        }
+
+        //如果订单状态不是待付款的就挡回去
+        if (mallOrder1.getStatus() != OrderStatusEnum.WAIT_PAY.getK()) {
+            return;
+        }
+
+        //再次判断下失效时间
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(mallOrder1.getModifyTime());
+        calendar.add(Calendar.MINUTE, 30);
+        if (calendar.getTime().after(new Date())) {
+            return;
+        }
+
+        //修改订单状态
+        int rows = mallOrderMapper.changeOrderStatus(OrderStatusEnum.OUT_OF_VALUE.getK(), mallOrder1.getUserId(), mallOrder1.getId());
+        if (1 != rows) {
+            throw new EmallException("更改订单状态失败");
+        }
+
+        //增加库存
+        List<MallOrderDetail> list =  mallOrderDetailMapper.listMallOrderDetail(mallOrder1.getId());
+
+        //使用悲观锁再查询下
+        for (MallOrderDetail mallOrderDetail : list) {
+            MallGoods mallGoods = mallGoodsMapper.getGoodById4Update(mallOrderDetail.getGoodId());
+            if (null == mallGoods) {
+                throw new EmallException("需要增加库存的商品信息不存在");
+            }
+            rows = mallGoodsMapper.changeGoodsNum(mallGoods.getId(), mallOrderDetail.getCounts());
+            if (1 != rows) {
+                throw new EmallException("增加库存失败");
+            }
+
+            log.info(">>>>增加商品的ID{},数量{}", mallGoods.getId(), mallOrderDetail.getCounts());
+        }
     }
 
 }

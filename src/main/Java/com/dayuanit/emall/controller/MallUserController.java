@@ -5,6 +5,9 @@ import com.dayuanit.emall.exception.EmallException;
 import com.dayuanit.emall.pojo.MallUser;
 import com.dayuanit.emall.service.MallUserService;
 import com.dayuanit.emall.vo.UserVo;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,16 +18,13 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.Servlet;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @Controller
 @RequestMapping("/malluser")
-public class MallUserController extends BaseController{
+public class MallUserController extends BaseController {
 
     Logger log = LoggerFactory.getLogger(MallUserController.class);
 
@@ -81,16 +81,48 @@ public class MallUserController extends BaseController{
     @ResponseBody
     public AjaxResultDTO login(String username, String password, HttpServletRequest req) {
         try {
-            MallUser mallUser = mallUserService.login(username, password);
-            req.getSession().setAttribute(LOGIN_USER, mallUser);//将用户名放到session中
+            Subject subject = SecurityUtils.getSubject();//因为我们在方法中使用的是usernamePasswordToken所以我们new一个出来
+            UsernamePasswordToken usernamePasswordToken = new UsernamePasswordToken();
+            usernamePasswordToken.setUsername(username);
+            usernamePasswordToken.setPassword(password.toCharArray());
+            subject.login(usernamePasswordToken);//使用login方法来验证
+
+            MallUser mallUser = mallUserService.getMallUser(username);
+            setCurrentUser(mallUser);
+//            MallUser mallUser = mallUserService.login(username, password);
+//            req.getSession().setAttribute(LOGIN_USER, mallUser);//将用户名放到session中
+
         } catch (EmallException ee) {
             log.error("登陆失败:{}", ee.getMessage());
             return AjaxResultDTO.failed(ee.getMessage());
         } catch (Exception e) {
-            log.error("登陆异常");
+            log.error("登陆异常{}", e);
             return AjaxResultDTO.failed("系统异常请联系客服");
         }
 
         return AjaxResultDTO.success();
+    }
+
+//    @RequestMapping("/logout")
+//    public String logout(HttpServletRequest req) {
+//        HttpSession session = req.getSession(false);
+//        if (null != session) {
+//            session.invalidate();
+//        }
+
+//        return "redirect:/index.jsp";
+//        return "redirect:/";
+//    }
+
+    @RequestMapping("/logout")
+    public String logout(HttpServletRequest req) {
+        Subject subject = SecurityUtils.getSubject();
+        subject.logout();//subject调用securityManager来清除掉信息,下次访问时filter发现没有信息让退回登陆
+        return "redirect:/";
+    }
+
+    @RequestMapping("/toWelcome")
+    public String toWelcome() {
+        return "welcome";
     }
 }

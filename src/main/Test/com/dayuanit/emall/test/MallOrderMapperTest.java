@@ -75,4 +75,11 @@ public class MallOrderMapperTest {
 //        List<MallOrder> list = mallOrderMapper.listOrderByUserIdAndStatus(12, null);
 //        System.out.println(list.size());
     }
+
+    @Test
+    @Rollback
+    public void testListOrderByStatus() {
+        List<MallOrder> list = mallOrderMapper.listOrderByStatus(1, 0, 20);
+        assertEquals(1, list.size());
+    }
 }

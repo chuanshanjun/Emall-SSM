@@ -102,7 +102,7 @@
                 }
 
                 //window.location.href='/user/toUserCenter.do';
-                window.location.href='/';
+                window.location.href='/order/toMyOrder.do';
 
             },
             error:function(xhr,textStatus){

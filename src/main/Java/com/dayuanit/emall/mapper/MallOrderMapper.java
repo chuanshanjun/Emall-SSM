@@ -22,4 +22,9 @@ public interface MallOrderMapper {
     int countListOrderByUserIdAndStatus(@Param("userId") Integer userId, @Param("status") Integer status);
 
     MallOrder getOrderById4Lock(@Param("mallOrderId") Integer mallOrderId);
+
+    List<MallOrder> listExpiredOrder();
+
+    List<MallOrder> listOrderByStatus(@Param("status") Integer status,
+                                               @Param("offset") Integer offset, @Param("pageNum") Integer pageNum);
 }
